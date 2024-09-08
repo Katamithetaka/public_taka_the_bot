@@ -1,5 +1,5 @@
 use axum::{Router, routing::get, response::{IntoResponse, Html}};
-
+use common::Error;
 
 const INDEX_HTML: &str = include_str!("../assets/index.html");
 const STATUS_BOX: &str = r#"<a href="{{href}}" id="status_box">
@@ -7,37 +7,44 @@ const STATUS_BOX: &str = r#"<a href="{{href}}" id="status_box">
         <div id="status" class="{{status_class}}"> {{status}} </div> 
 </a> "#;
 
-pub struct StatusWebsite {
-    pub url: &'static str,
-    pub title: &'static str,
-    pub description: &'static str
+struct StatusWebsite {
+    url: &'static str,
+    title: &'static str,
+    description: &'static str
 }
 
 const WEBSITES: [StatusWebsite; 2] = [
     StatusWebsite {
-        url: "https://bot.takathedinosaur.tech/health",
+        url: "https://bot.takathedinosaur.dev/health",
         title: "Discord bot",
         description: "A discord bot I made specifically for my discord server to make my own sheetbot and it also got some hiyajo maho functionalities."
     },
     StatusWebsite {
-        url: "https://htmlserver.takathedinosaur.tech/health",
+        url: "https://htmlserver.takathedinosaur.dev/health",
         title: "HTML Server",
         description: "A server I use to generate teto and tetra commands. It might someday get replaced with generating graphics directly from rust, but css is easier."
     },
 ];
 
 #[tokio::main]
-async fn main() {
+async fn main() -> Result<(), Error> {
     let app = Router::new()
     // `GET /` goes to `root`
     .route_service("/", get(health_status))
     .route("/index.html", get(health_status))
     .route_service("/index.css", tower_http::services::ServeFile::new("./assets/index.css"));
+    let ip_bind = std::env::var("BIND_URL").unwrap_or("0.0.0.0:8080".to_string());
+
+    let listener = tokio::net::TcpListener::bind(&ip_bind).await.map_err(|e| {
+        Error(format!("Couldn't bind to address {ip_bind}: {e}"))
+    })?;
 
     // run our app with hyper
-    let _ = axum::Server::bind(&"0.0.0.0:8080".parse().unwrap())
-        .serve(app.into_make_service())
+    let _ = axum::serve(listener, app)
         .await;
+
+    Ok(())
+
 }
 
 

@@ -1,3 +1,3 @@
 [workspace]
 resolver = "2"
-members = ["taka_the_discord_bot_client", "taka_the_discord_bot_tetrio_html_server", "taka_the_discord_bot_common", "taka_the_discord_bot_status", "tetrio-api"]
+members = ["taka_the_discord_bot_client", "taka_the_discord_bot_api", "taka_the_discord_bot_tetrio_html_server", "taka_the_discord_bot_common", "taka_the_discord_bot_status", "tetrio-api"]

@@ -1,3 +1,4 @@
+version: '3.2'
 services:
   taka_the_discord_bot_status:
     image: taka_the_discord_bot_status
@@ -7,8 +8,8 @@ services:
     networks:
       - taka_the_discord_bot_status_network
     environment:
-      - VIRTUAL_HOST=bothealth.takathedinosaur.dev
-      - LETSENCRYPT_HOST=bothealth.takathedinosaur.dev
+      - VIRTUAL_HOST=health.takathedinosaur.tech
+      - LETSENCRYPT_HOST=health.takathedinosaur.tech
       - VIRTUAL_PORT=8080
   taka_the_discord_bot_dependencies:
     image: taka_the_discord_bot_dependencies
@@ -19,32 +20,19 @@ services:
     volumes:
       - ./taka_the_discord_bot_tetrio_html_server/assets:/taka_the_discord_bot_tetrio_html_server/assets
     environment:
-      - VIRTUAL_HOST=bothtmlserver.takathedinosaur.dev
-      - LETSENCRYPT_HOST=bothtmlserver.takathedinosaur.dev
+      - VIRTUAL_HOST=htmlserver.takathedinosaur.tech
+      - LETSENCRYPT_HOST=htmlserver.takathedinosaur.tech
       - VIRTUAL_PORT=8080
     depends_on:
       - taka_the_discord_bot_dependencies
-      - taka_the_discord_bot_redis
     networks:
-       taka_the_discord_bot_tetrio_html_server_network:
-       taka_the_discord_bot_redis_network:
-
-  taka_the_discord_bot_database:
-    build: ./taka_the_discord_bot_database
-    image: taka_the_discord_bot_database
-    env_file: 
-      ./taka_the_discord_bot_api/.env
-    environment:
-      POSTGRES_USER:     ${POSTGRES_USR}
-      POSTGRES_PASSWORD: ${POSTGRES_PWD}
-    networks:
-      - taka_the_discord_bot_db_network
+      - taka_the_discord_bot_tetrio_html_server_network
   taka_the_discord_bot_client:
     build: ./taka_the_discord_bot_client
     image: taka_the_discord_bot_client
     environment:
-      - VIRTUAL_HOST=bot.takathedinosaur.dev
-      - LETSENCRYPT_HOST=bot.takathedinosaur.dev
+      - VIRTUAL_HOST=bot.takathedinosaur.tech
+      - LETSENCRYPT_HOST=bot.takathedinosaur.tech
       - VIRTUAL_PORT=8080
     volumes:
       - taka_the_discord_bot_client_chrome:/root/.local/share/headless-chrome/
@@ -53,8 +41,8 @@ services:
       - ./logs/taka_the_discord_bot:/taka_the_discord_bot_client/logs
     links: 
       - taka_the_discord_bot_tetrio_html_server
+    external_links:
       - taka_the_discord_bot_database
-      - taka_the_discord_bot_redis
     depends_on:
       - taka_the_discord_bot_dependencies
       - taka_the_discord_bot_tetrio_html_server
@@ -62,13 +50,12 @@ services:
       - taka_the_discord_bot_client_network
       - taka_the_discord_bot_db_network
       - taka_the_discord_bot_tetrio_html_server_network  
-      - taka_the_discord_bot_redis_network
   taka_the_discord_bot_api:
     build: ./taka_the_discord_bot_api
     image: taka_the_discord_bot_api
     environment:
-      - VIRTUAL_HOST=botapi.takathedinosaur.dev
-      - LETSENCRYPT_HOST=botapi.takathedinosaur.dev
+      - VIRTUAL_HOST=botapi.takathedinosaur.tech
+      - LETSENCRYPT_HOST=botapi.takathedinosaur.tech
       - VIRTUAL_PORT=8080
     volumes:
       - taka_the_discord_bot_api_chrome:/root/.local/share/headless-chrome/
@@ -76,25 +63,15 @@ services:
       - ./logs/taka_the_discord_api:/taka_the_discord_bot_api/logs
     links: 
       - taka_the_discord_bot_tetrio_html_server
+    external_links:
       - taka_the_discord_bot_database
-      - taka_the_discord_bot_redis
     depends_on:
       - taka_the_discord_bot_dependencies
       - taka_the_discord_bot_tetrio_html_server
     networks:
-       taka_the_discord_bot_db_network:
-       taka_the_discord_bot_tetrio_html_server_network:  
-       taka_the_discord_bot_api_network:
-       taka_the_discord_bot_redis_network:
-  taka_the_discord_bot_redis:
-    image: redis
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-    volumes:
-      - redis_data:/var/lib/redis
-      - redis_conf:/usr/local/etc/redis/redis.conf
-    networks:
-      taka_the_discord_bot_redis_network:
+      - taka_the_discord_bot_api_network
+      - taka_the_discord_bot_db_network
+      - taka_the_discord_bot_tetrio_html_server_network  
 networks: 
   taka_the_discord_bot_status_network: 
     name: taka_the_discord_bot_status_network
@@ -106,12 +83,8 @@ networks:
     name: taka_the_discord_bot_tetrio_html_server_network
   taka_the_discord_bot_db_network:
     name: taka_the_discord_bot_db_network
-  taka_the_discord_bot_redis_network: 
-    name: taka_the_discord_bot_redis_network 
-
+    external: true
 volumes:
-  redis_data:
-  redis_conf:
   taka_the_discord_bot_client_chrome:
     name: taka_the_discord_bot_client_chrome
   taka_the_discord_bot_api_chrome:

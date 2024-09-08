@@ -8,13 +8,8 @@ SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 
 --
--- Drop databases (except postgres and template1)
+-- Roles
 --
-
-DROP DATABASE taka_the_discord_bot;
-
-
-
 
 
 --
@@ -36,12 +31,14 @@ DROP DATABASE taka_the_discord_bot;
 -- Database "template1" dump
 --
 
+\connect template1
+
 --
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 15.3 (Debian 15.3-1.pgdg110+1)
--- Dumped by pg_dump version 15.3 (Debian 15.3-1.pgdg110+1)
+-- Dumped from database version 16.0
+-- Dumped by pg_dump version 16.0
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -53,65 +50,6 @@ SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
-
-UPDATE pg_catalog.pg_database SET datistemplate = false WHERE datname = 'template1';
-DROP DATABASE template1;
---
--- Name: template1; Type: DATABASE; Schema: -; Owner: postgres
---
-
-CREATE DATABASE template1 WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'C.UTF-8';
-
-
-ALTER DATABASE template1 OWNER TO postgres;
-
-\connect template1
-
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
-
---
--- Name: DATABASE template1; Type: COMMENT; Schema: -; Owner: postgres
---
-
-COMMENT ON DATABASE template1 IS 'default template for new databases';
-
-
---
--- Name: template1; Type: DATABASE PROPERTIES; Schema: -; Owner: postgres
---
-
-ALTER DATABASE template1 IS_TEMPLATE = true;
-
-
-\connect template1
-
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
-
---
--- Name: DATABASE template1; Type: ACL; Schema: -; Owner: postgres
---
-
-REVOKE CONNECT,TEMPORARY ON DATABASE template1 FROM PUBLIC;
-GRANT CONNECT ON DATABASE template1 TO PUBLIC;
-
 
 --
 -- PostgreSQL database dump complete
@@ -121,12 +59,14 @@ GRANT CONNECT ON DATABASE template1 TO PUBLIC;
 -- Database "postgres" dump
 --
 
+\connect postgres
+
 --
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 15.3 (Debian 15.3-1.pgdg110+1)
--- Dumped by pg_dump version 15.3 (Debian 15.3-1.pgdg110+1)
+-- Dumped from database version 16.0
+-- Dumped by pg_dump version 16.0
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -138,36 +78,6 @@ SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
-
-DROP DATABASE postgres;
---
--- Name: postgres; Type: DATABASE; Schema: -; Owner: postgres
---
-
-CREATE DATABASE postgres WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'C.UTF-8';
-
-
-ALTER DATABASE postgres OWNER TO postgres;
-
-\connect postgres
-
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
-
---
--- Name: DATABASE postgres; Type: COMMENT; Schema: -; Owner: postgres
---
-
-COMMENT ON DATABASE postgres IS 'default administrative connection database';
-
 
 --
 -- PostgreSQL database dump complete
@@ -181,8 +91,8 @@ COMMENT ON DATABASE postgres IS 'default administrative connection database';
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 15.3 (Debian 15.3-1.pgdg110+1)
--- Dumped by pg_dump version 15.3 (Debian 15.3-1.pgdg110+1)
+-- Dumped from database version 16.0
+-- Dumped by pg_dump version 16.0
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -199,11 +109,13 @@ SET row_security = off;
 -- Name: taka_the_discord_bot; Type: DATABASE; Schema: -; Owner: postgres
 --
 
-CREATE DATABASE taka_the_discord_bot WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'C.UTF-8';
+CREATE DATABASE taka_the_discord_bot WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LC_COLLATE = 'C' LC_CTYPE = 'C.UTF-8';
 
 
 ALTER DATABASE taka_the_discord_bot OWNER TO postgres;
+
 \connect taka_the_discord_bot
+
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
@@ -216,7 +128,21 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Name: sillycommandimage; Type: TYPE; Schema: public; Owner: taka_the_discord_bot
+-- Name: uuid-ossp; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION "uuid-ossp"; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UUIDs)';
+
+
+--
+-- Name: sillycommandimage; Type: TYPE; Schema: public; Owner: postgres
 --
 
 CREATE TYPE public.sillycommandimage AS (
@@ -225,9 +151,10 @@ CREATE TYPE public.sillycommandimage AS (
 );
 
 
+ALTER TYPE public.sillycommandimage OWNER TO postgres;
 
 --
--- Name: sillycommandselfimage; Type: TYPE; Schema: public; Owner: taka_the_discord_bot
+-- Name: sillycommandselfimage; Type: TYPE; Schema: public; Owner: postgres
 --
 
 CREATE TYPE public.sillycommandselfimage AS (
@@ -235,9 +162,10 @@ CREATE TYPE public.sillycommandselfimage AS (
 );
 
 
+ALTER TYPE public.sillycommandselfimage OWNER TO postgres;
 
 --
--- Name: sillycommandusage; Type: TYPE; Schema: public; Owner: taka_the_discord_bot
+-- Name: sillycommandusage; Type: TYPE; Schema: public; Owner: postgres
 --
 
 CREATE TYPE public.sillycommandusage AS (
@@ -247,9 +175,10 @@ CREATE TYPE public.sillycommandusage AS (
 );
 
 
+ALTER TYPE public.sillycommandusage OWNER TO postgres;
 
 --
--- Name: sillycommandsingleuserdata; Type: TYPE; Schema: public; Owner: taka_the_discord_bot
+-- Name: sillycommandsingleuserdata; Type: TYPE; Schema: public; Owner: postgres
 --
 
 CREATE TYPE public.sillycommandsingleuserdata AS (
@@ -259,9 +188,10 @@ CREATE TYPE public.sillycommandsingleuserdata AS (
 );
 
 
+ALTER TYPE public.sillycommandsingleuserdata OWNER TO postgres;
 
 --
--- Name: sillycommand; Type: TYPE; Schema: public; Owner: taka_the_discord_bot
+-- Name: sillycommand; Type: TYPE; Schema: public; Owner: postgres
 --
 
 CREATE TYPE public.sillycommand AS (
@@ -277,9 +207,10 @@ CREATE TYPE public.sillycommand AS (
 );
 
 
+ALTER TYPE public.sillycommand OWNER TO postgres;
 
 --
--- Name: sillycommandtype; Type: TYPE; Schema: public; Owner: taka_the_discord_bot
+-- Name: sillycommandtype; Type: TYPE; Schema: public; Owner: postgres
 --
 
 CREATE TYPE public.sillycommandtype AS ENUM (
@@ -288,6 +219,7 @@ CREATE TYPE public.sillycommandtype AS ENUM (
 );
 
 
+ALTER TYPE public.sillycommandtype OWNER TO postgres;
 
 --
 -- Name: delete_silly_command(integer); Type: PROCEDURE; Schema: public; Owner: postgres
@@ -312,7 +244,7 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- Name: silly_command_images; Type: TABLE; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_images; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.silly_command_images (
@@ -323,9 +255,10 @@ CREATE TABLE public.silly_command_images (
 );
 
 
+ALTER TABLE public.silly_command_images OWNER TO postgres;
 
 --
--- Name: silly_command_self_action_images; Type: TABLE; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_self_action_images; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.silly_command_self_action_images (
@@ -335,8 +268,10 @@ CREATE TABLE public.silly_command_self_action_images (
 );
 
 
+ALTER TABLE public.silly_command_self_action_images OWNER TO postgres;
+
 --
--- Name: silly_command_self_action_texts; Type: TABLE; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_self_action_texts; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.silly_command_self_action_texts (
@@ -346,8 +281,10 @@ CREATE TABLE public.silly_command_self_action_texts (
 );
 
 
+ALTER TABLE public.silly_command_self_action_texts OWNER TO postgres;
+
 --
--- Name: silly_command_texts; Type: TABLE; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_texts; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.silly_command_texts (
@@ -357,9 +294,10 @@ CREATE TABLE public.silly_command_texts (
 );
 
 
+ALTER TABLE public.silly_command_texts OWNER TO postgres;
 
 --
--- Name: silly_commands; Type: TABLE; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_commands; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.silly_commands (
@@ -372,9 +310,10 @@ CREATE TABLE public.silly_commands (
 );
 
 
+ALTER TABLE public.silly_commands OWNER TO postgres;
 
 --
--- Name: silly_command_data; Type: VIEW; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_data; Type: VIEW; Schema: public; Owner: postgres
 --
 
 CREATE VIEW public.silly_command_data AS
@@ -394,9 +333,10 @@ CREATE VIEW public.silly_command_data AS
   GROUP BY silly_commands.id_silly_command, silly_commands.name, silly_commands.command_type, silly_commands.description;
 
 
+ALTER VIEW public.silly_command_data OWNER TO postgres;
 
 --
--- Name: silly_command_images_id_silly_command_images_seq; Type: SEQUENCE; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_images_id_silly_command_images_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.silly_command_images_id_silly_command_images_seq
@@ -408,16 +348,17 @@ CREATE SEQUENCE public.silly_command_images_id_silly_command_images_seq
     CACHE 1;
 
 
+ALTER SEQUENCE public.silly_command_images_id_silly_command_images_seq OWNER TO postgres;
 
 --
--- Name: silly_command_images_id_silly_command_images_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_images_id_silly_command_images_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
 ALTER SEQUENCE public.silly_command_images_id_silly_command_images_seq OWNED BY public.silly_command_images.id_silly_command_images;
 
 
 --
--- Name: silly_command_new; Type: TABLE; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_new; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.silly_command_new (
@@ -430,9 +371,10 @@ CREATE TABLE public.silly_command_new (
 );
 
 
+ALTER TABLE public.silly_command_new OWNER TO postgres;
 
 --
--- Name: silly_command_new_id_command_seq; Type: SEQUENCE; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_new_id_command_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.silly_command_new_id_command_seq
@@ -443,9 +385,10 @@ CREATE SEQUENCE public.silly_command_new_id_command_seq
     CACHE 1;
 
 
+ALTER SEQUENCE public.silly_command_new_id_command_seq OWNER TO postgres;
 
 --
--- Name: silly_command_new_id_silly_command_seq; Type: SEQUENCE; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_new_id_silly_command_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.silly_command_new_id_silly_command_seq
@@ -457,16 +400,17 @@ CREATE SEQUENCE public.silly_command_new_id_silly_command_seq
     CACHE 1;
 
 
+ALTER SEQUENCE public.silly_command_new_id_silly_command_seq OWNER TO postgres;
 
 --
--- Name: silly_command_new_id_silly_command_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_new_id_silly_command_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
 ALTER SEQUENCE public.silly_command_new_id_silly_command_seq OWNED BY public.silly_command_new.id_silly_command;
 
 
 --
--- Name: silly_command_self_action_tex_id_silly_command_self_action__seq; Type: SEQUENCE; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_self_action_tex_id_silly_command_self_action__seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.silly_command_self_action_tex_id_silly_command_self_action__seq
@@ -478,16 +422,17 @@ CREATE SEQUENCE public.silly_command_self_action_tex_id_silly_command_self_actio
     CACHE 1;
 
 
+ALTER SEQUENCE public.silly_command_self_action_tex_id_silly_command_self_action__seq OWNER TO postgres;
 
 --
--- Name: silly_command_self_action_tex_id_silly_command_self_action__seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_self_action_tex_id_silly_command_self_action__seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
 ALTER SEQUENCE public.silly_command_self_action_tex_id_silly_command_self_action__seq OWNED BY public.silly_command_self_action_texts.id_silly_command_self_action_text;
 
 
 --
--- Name: silly_command_self_actions_id_silly_command_self_action_seq; Type: SEQUENCE; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_self_actions_id_silly_command_self_action_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.silly_command_self_actions_id_silly_command_self_action_seq
@@ -499,16 +444,17 @@ CREATE SEQUENCE public.silly_command_self_actions_id_silly_command_self_action_s
     CACHE 1;
 
 
+ALTER SEQUENCE public.silly_command_self_actions_id_silly_command_self_action_seq OWNER TO postgres;
 
 --
--- Name: silly_command_self_actions_id_silly_command_self_action_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_self_actions_id_silly_command_self_action_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
 ALTER SEQUENCE public.silly_command_self_actions_id_silly_command_self_action_seq OWNED BY public.silly_command_self_action_images.id_silly_command_self_action;
 
 
 --
--- Name: silly_command_texts_id_silly_command_text_seq; Type: SEQUENCE; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_texts_id_silly_command_text_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.silly_command_texts_id_silly_command_text_seq
@@ -520,16 +466,17 @@ CREATE SEQUENCE public.silly_command_texts_id_silly_command_text_seq
     CACHE 1;
 
 
+ALTER SEQUENCE public.silly_command_texts_id_silly_command_text_seq OWNER TO postgres;
 
 --
--- Name: silly_command_texts_id_silly_command_text_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_texts_id_silly_command_text_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
 ALTER SEQUENCE public.silly_command_texts_id_silly_command_text_seq OWNED BY public.silly_command_texts.id_silly_command_text;
 
 
 --
--- Name: silly_command_type; Type: TABLE; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_type; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.silly_command_type (
@@ -538,9 +485,10 @@ CREATE TABLE public.silly_command_type (
 );
 
 
+ALTER TABLE public.silly_command_type OWNER TO postgres;
 
 --
--- Name: silly_command_type_id_silly_command_type_seq; Type: SEQUENCE; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_type_id_silly_command_type_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.silly_command_type_id_silly_command_type_seq
@@ -552,16 +500,17 @@ CREATE SEQUENCE public.silly_command_type_id_silly_command_type_seq
     CACHE 1;
 
 
+ALTER SEQUENCE public.silly_command_type_id_silly_command_type_seq OWNER TO postgres;
 
 --
--- Name: silly_command_type_id_silly_command_type_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_type_id_silly_command_type_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
 ALTER SEQUENCE public.silly_command_type_id_silly_command_type_seq OWNED BY public.silly_command_type.id_silly_command_type;
 
 
 --
--- Name: silly_command_usage; Type: TABLE; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_usage; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.silly_command_usage (
@@ -573,9 +522,10 @@ CREATE TABLE public.silly_command_usage (
 );
 
 
+ALTER TABLE public.silly_command_usage OWNER TO postgres;
 
 --
--- Name: silly_command_usage_id_silly_command_usage_seq; Type: SEQUENCE; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_usage_id_silly_command_usage_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.silly_command_usage_id_silly_command_usage_seq
@@ -587,16 +537,17 @@ CREATE SEQUENCE public.silly_command_usage_id_silly_command_usage_seq
     CACHE 1;
 
 
+ALTER SEQUENCE public.silly_command_usage_id_silly_command_usage_seq OWNER TO postgres;
 
 --
--- Name: silly_command_usage_id_silly_command_usage_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_usage_id_silly_command_usage_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
 ALTER SEQUENCE public.silly_command_usage_id_silly_command_usage_seq OWNED BY public.silly_command_usage.id_silly_command_usage;
 
 
 --
--- Name: silly_commands_data_new; Type: VIEW; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_commands_data_new; Type: VIEW; Schema: public; Owner: postgres
 --
 
 CREATE VIEW public.silly_commands_data_new AS
@@ -639,9 +590,10 @@ CREATE VIEW public.silly_commands_data_new AS
           GROUP BY silly_command_self_action_texts_1.id_silly_command) silly_command_self_action_texts USING (id_silly_command));
 
 
+ALTER VIEW public.silly_commands_data_new OWNER TO postgres;
 
 --
--- Name: silly_commands_id_new_seq; Type: SEQUENCE; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_commands_id_new_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.silly_commands_id_new_seq
@@ -652,9 +604,10 @@ CREATE SEQUENCE public.silly_commands_id_new_seq
     CACHE 1;
 
 
+ALTER SEQUENCE public.silly_commands_id_new_seq OWNER TO postgres;
 
 --
--- Name: silly_commands_id_seq; Type: SEQUENCE; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_commands_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.silly_commands_id_seq
@@ -666,72 +619,92 @@ CREATE SEQUENCE public.silly_commands_id_seq
     CACHE 1;
 
 
+ALTER SEQUENCE public.silly_commands_id_seq OWNER TO postgres;
 
 --
--- Name: silly_commands_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_commands_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
 ALTER SEQUENCE public.silly_commands_id_seq OWNED BY public.silly_commands.id_silly_command;
 
 
 --
--- Name: silly_command_images id_silly_command_images; Type: DEFAULT; Schema: public; Owner: taka_the_discord_bot
+-- Name: users; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.users (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    name character varying(100) NOT NULL,
+    email character varying(255) NOT NULL,
+    verified boolean DEFAULT false NOT NULL,
+    password character varying(100) NOT NULL,
+    role character varying(50) DEFAULT 'user'::character varying NOT NULL,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    password_rev uuid DEFAULT gen_random_uuid() NOT NULL
+);
+
+
+ALTER TABLE public.users OWNER TO postgres;
+
+--
+-- Name: silly_command_images id_silly_command_images; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.silly_command_images ALTER COLUMN id_silly_command_images SET DEFAULT nextval('public.silly_command_images_id_silly_command_images_seq'::regclass);
 
 
 --
--- Name: silly_command_new id_silly_command; Type: DEFAULT; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_new id_silly_command; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.silly_command_new ALTER COLUMN id_silly_command SET DEFAULT nextval('public.silly_command_new_id_silly_command_seq'::regclass);
 
 
 --
--- Name: silly_command_self_action_images id_silly_command_self_action; Type: DEFAULT; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_self_action_images id_silly_command_self_action; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.silly_command_self_action_images ALTER COLUMN id_silly_command_self_action SET DEFAULT nextval('public.silly_command_self_actions_id_silly_command_self_action_seq'::regclass);
 
 
 --
--- Name: silly_command_self_action_texts id_silly_command_self_action_text; Type: DEFAULT; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_self_action_texts id_silly_command_self_action_text; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.silly_command_self_action_texts ALTER COLUMN id_silly_command_self_action_text SET DEFAULT nextval('public.silly_command_self_action_tex_id_silly_command_self_action__seq'::regclass);
 
 
 --
--- Name: silly_command_texts id_silly_command_text; Type: DEFAULT; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_texts id_silly_command_text; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.silly_command_texts ALTER COLUMN id_silly_command_text SET DEFAULT nextval('public.silly_command_texts_id_silly_command_text_seq'::regclass);
 
 
 --
--- Name: silly_command_type id_silly_command_type; Type: DEFAULT; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_type id_silly_command_type; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.silly_command_type ALTER COLUMN id_silly_command_type SET DEFAULT nextval('public.silly_command_type_id_silly_command_type_seq'::regclass);
 
 
 --
--- Name: silly_command_usage id_silly_command_usage; Type: DEFAULT; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_usage id_silly_command_usage; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.silly_command_usage ALTER COLUMN id_silly_command_usage SET DEFAULT nextval('public.silly_command_usage_id_silly_command_usage_seq'::regclass);
 
 
 --
--- Name: silly_commands id_silly_command; Type: DEFAULT; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_commands id_silly_command; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.silly_commands ALTER COLUMN id_silly_command SET DEFAULT nextval('public.silly_commands_id_seq'::regclass);
 
 
 --
--- Data for Name: silly_command_images; Type: TABLE DATA; Schema: public; Owner: taka_the_discord_bot
+-- Data for Name: silly_command_images; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.silly_command_images (id_silly_command_images, id_silly_command, image, gender_attribute) FROM stdin;
@@ -953,11 +926,12 @@ COPY public.silly_command_images (id_silly_command_images, id_silly_command, ima
 119	4	./assets/841d74cb-d92e-490a-8c39-f2fd5e96adf9.gif	Female x Female
 157	9	./assets/e13588b4-3976-40c2-a144-278167e2e051.gif	Male x Female
 253	2	./assets/20392466-3850-44b5-91af-96b0f8df14f7.gif	Male x Male
+254	10	./assets/3e9ed022-934c-4ab3-8557-dd8d7ae30a2f.gif	ALL
 \.
 
 
 --
--- Data for Name: silly_command_new; Type: TABLE DATA; Schema: public; Owner: taka_the_discord_bot
+-- Data for Name: silly_command_new; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.silly_command_new (id_silly_command, name, command_type, description, gender_attributes, footer_text) FROM stdin;
@@ -965,7 +939,7 @@ COPY public.silly_command_new (id_silly_command, name, command_type, description
 
 
 --
--- Data for Name: silly_command_self_action_images; Type: TABLE DATA; Schema: public; Owner: taka_the_discord_bot
+-- Data for Name: silly_command_self_action_images; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.silly_command_self_action_images (id_silly_command_self_action, id_silly_command, image) FROM stdin;
@@ -982,7 +956,7 @@ COPY public.silly_command_self_action_images (id_silly_command_self_action, id_s
 
 
 --
--- Data for Name: silly_command_self_action_texts; Type: TABLE DATA; Schema: public; Owner: taka_the_discord_bot
+-- Data for Name: silly_command_self_action_texts; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.silly_command_self_action_texts (id_silly_command_self_action_text, id_silly_command, text) FROM stdin;
@@ -994,7 +968,7 @@ COPY public.silly_command_self_action_texts (id_silly_command_self_action_text, 
 
 
 --
--- Data for Name: silly_command_texts; Type: TABLE DATA; Schema: public; Owner: taka_the_discord_bot
+-- Data for Name: silly_command_texts; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.silly_command_texts (id_silly_command_text, id_silly_command, text) FROM stdin;
@@ -1009,7 +983,7 @@ COPY public.silly_command_texts (id_silly_command_text, id_silly_command, text) 
 
 
 --
--- Data for Name: silly_command_type; Type: TABLE DATA; Schema: public; Owner: taka_the_discord_bot
+-- Data for Name: silly_command_type; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.silly_command_type (id_silly_command_type, name) FROM stdin;
@@ -1019,11 +993,10 @@ COPY public.silly_command_type (id_silly_command_type, name) FROM stdin;
 
 
 --
--- Data for Name: silly_command_usage; Type: TABLE DATA; Schema: public; Owner: taka_the_discord_bot
+-- Data for Name: silly_command_usage; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.silly_command_usage (id_silly_command_usage, id_silly_command, id_user_1, id_user_2, usages) FROM stdin;
-90	3	434626996262273038	342730801567498240	3
 56	4	559157780666122241	315774797994786836	3
 3	2	434626996262273038	1042723285600829460	107
 34	2	434626996262273038	133719582660755457	2
@@ -1032,17 +1005,13 @@ COPY public.silly_command_usage (id_silly_command_usage, id_silly_command, id_us
 14	4	434626996262273038	1042723285600829460	2
 15	3	188711830720479235	434626996262273038	2
 35	2	141336852543045633	1042723285600829460	2
-71	3	1110540052288774224	434626996262273038	45
-21	2	434626996262273038	342730801567498240	34
 17	2	606296261531926533	269123912304951297	4
 19	3	434626996262273038	270974825164439552	2
-10	3	434626996262273038	409060256413384713	5
 16	2	409060256413384713	269123912304951297	3
 77	3	188711830720479235	127415620793794560	4
 75	3	434626996262273038	188711830720479235	3
 66	2	1110540052288774224	851117889192591361	4
 78	3	127415620793794560	188711830720479235	4
-47	4	127415620793794560	188711830720479235	140
 63	7	188711830720479235	127415620793794560	26
 44	2	127415620793794560	188711830720479235	70
 25	2	606296261531926533	529590490094632963	2
@@ -1050,7 +1019,6 @@ COPY public.silly_command_usage (id_silly_command_usage, id_silly_command, id_us
 45	2	188711830720479235	127415620793794560	79
 30	2	529590490094632963	606296261531926533	2
 31	4	434626996262273038	409060256413384713	2
-41	2	342730801567498240	324644810621190145	50
 26	2	606296261531926533	697617953486798909	4
 69	2	342730801567498240	419885892103045140	2
 52	3	1110540052288774224	747874005092139022	9
@@ -1058,62 +1026,40 @@ COPY public.silly_command_usage (id_silly_command_usage, id_silly_command, id_us
 4	3	434626996262273038	1042723285600829460	10
 5	3	434626996262273038	697617953486798909	2
 6	3	697617953486798909	434626996262273038	2
-13	2	606296261531926533	434626996262273038	36
-18	3	434626996262273038	606296261531926533	9
 27	2	697617953486798909	606296261531926533	3
 58	3	1110540052288774224	559157780666122241	47
 88	2	1110540052288774224	947749124676153345	9
-61	2	869389411324940309	606296261531926533	9
 53	2	342730801567498240	1042723285600829460	2
 54	2	419885892103045140	606296261531926533	8
 33	3	947749124676153345	606296261531926533	4
-1	2	434626996262273038	409060256413384713	15
 9	3	141336852543045633	434626996262273038	18
-60	2	606296261531926533	869389411324940309	9
 79	2	1110540052288774224	559157780666122241	46
 57	3	947749124676153345	529590490094632963	2
 50	3	947749124676153345	1110540052288774224	3
 67	2	559157780666122241	851117889192591361	2
-2	2	409060256413384713	434626996262273038	13
 42	3	434626996262273038	141336852543045633	34
 43	3	947749124676153345	127415620793794560	2
 29	2	606296261531926533	947749124676153345	13
 82	2	559157780666122241	1110540052288774224	42
-40	2	606296261531926533	342730801567498240	15
-23	2	409060256413384713	606296261531926533	15
-20	2	342730801567498240	434626996262273038	61
 62	7	434626996262273038	188711830720479235	2
-12	2	606296261531926533	409060256413384713	51
 24	2	606296261531926533	419885892103045140	14
-49	3	342730801567498240	606296261531926533	12
 55	3	397598078695374861	1110540052288774224	43
 59	3	1110540052288774224	397598078695374861	46
-8	3	342730801567498240	434626996262273038	16
 68	2	697617953486798909	903501553112068096	2
-39	2	342730801567498240	606296261531926533	4
-22	2	434626996262273038	606296261531926533	23
 80	4	1110540052288774224	559157780666122241	7
-46	4	188711830720479235	127415620793794560	144
 76	3	434626996262273038	127415620793794560	2
-38	2	1110540052288774224	409060256413384713	159
 65	2	1110540052288774224	419885892103045140	3
 51	3	1110540052288774224	947749124676153345	4
-83	3	434626996262273038	1110540052288774224	11
-32	2	434626996262273038	1110540052288774224	28
 81	7	559157780666122241	1110540052288774224	4
 84	3	127415620793794560	148092513419264000	2
 85	2	434626996262273038	247873746709250048	2
 36	2	606296261531926533	1110540052288774224	5
 74	3	419885892103045140	606296261531926533	4
 86	3	1110540052288774224	606296261531926533	3
-72	3	1110540052288774224	869389411324940309	10
 28	2	947749124676153345	606296261531926533	12
 89	7	1110540052288774224	747874005092139022	2
 64	7	127415620793794560	188711830720479235	36
-7	3	409060256413384713	434626996262273038	6
 37	2	409060256413384713	1110540052288774224	52
-91	4	434626996262273038	606296261531926533	2
-11	3	409060256413384713	606296261531926533	38
 131	3	1110540052288774224	697617953486798909	2
 95	3	1110540052288774224	419885892103045140	2
 96	2	559157780666122241	529590490094632963	2
@@ -1123,6 +1069,29 @@ COPY public.silly_command_usage (id_silly_command_usage, id_silly_command, id_us
 133	2	697617953486798909	1110540052288774224	2
 101	2	397598078695374861	747874005092139022	10
 126	2	397598078695374861	533995393671757834	3
+90	3	434626996262273038	342730801567498240	4
+41	2	342730801567498240	324644810621190145	60
+18	3	434626996262273038	606296261531926533	13
+10	3	434626996262273038	409060256413384713	6
+39	2	342730801567498240	606296261531926533	5
+1	2	434626996262273038	409060256413384713	20
+12	2	606296261531926533	409060256413384713	68
+38	2	1110540052288774224	409060256413384713	161
+49	3	342730801567498240	606296261531926533	19
+23	2	409060256413384713	606296261531926533	16
+60	2	606296261531926533	869389411324940309	13
+2	2	409060256413384713	434626996262273038	20
+13	2	606296261531926533	434626996262273038	49
+8	3	342730801567498240	434626996262273038	18
+83	3	434626996262273038	1110540052288774224	14
+71	3	1110540052288774224	434626996262273038	48
+61	2	869389411324940309	606296261531926533	13
+47	4	127415620793794560	188711830720479235	142
+91	4	434626996262273038	606296261531926533	3
+46	4	188711830720479235	127415620793794560	148
+21	2	434626996262273038	342730801567498240	125
+22	2	434626996262273038	606296261531926533	33
+32	2	434626996262273038	1110540052288774224	34
 165	4	947749124676153345	1110540052288774224	3
 103	2	434626996262273038	419885892103045140	3
 106	3	397598078695374861	419885892103045140	2
@@ -1130,21 +1099,16 @@ COPY public.silly_command_usage (id_silly_command_usage, id_silly_command, id_us
 108	2	1110540052288774224	606296261531926533	2
 151	9	1102424523250356314	559157780666122241	4
 159	2	559157780666122241	409060256413384713	4
-132	3	1110540052288774224	851117889192591361	8
-111	2	1110540052288774224	434626996262273038	35
 163	9	1110540052288774224	397598078695374861	4
-172	2	255515037676863490	231780195529523201	27
 117	3	419885892103045140	409060256413384713	2
 118	3	747874005092139022	1110540052288774224	2
 123	2	397598078695374861	434626996262273038	11
 120	2	747874005092139022	1110540052288774224	2
 121	3	559157780666122241	529590490094632963	2
 153	9	397598078695374861	559157780666122241	2
-124	2	1110540052288774224	397598078695374861	44
 142	2	559157780666122241	434626996262273038	5
 104	2	434626996262273038	559157780666122241	7
 125	2	533995393671757834	1110540052288774224	2
-122	2	1110540052288774224	533995393671757834	5
 127	2	533995393671757834	397598078695374861	2
 128	3	947749124676153345	534057315318497281	2
 129	2	947749124676153345	534057315318497281	2
@@ -1152,7 +1116,6 @@ COPY public.silly_command_usage (id_silly_command_usage, id_silly_command, id_us
 135	2	606296261531926533	559157780666122241	2
 173	4	255515037676863490	231780195529523201	82
 136	2	559157780666122241	1102424523250356314	2
-119	3	409060256413384713	1110540052288774224	42
 137	3	1110540052288774224	1079393784992899102	2
 138	4	559157780666122241	747874005092139022	2
 164	3	947749124676153345	397598078695374861	4
@@ -1169,21 +1132,17 @@ COPY public.silly_command_usage (id_silly_command_usage, id_silly_command, id_us
 147	9	533995393671757834	1042723285600829460	2
 148	9	1110540052288774224	533995393671757834	2
 149	9	1110540052288774224	434626996262273038	2
-93	2	1110540052288774224	529590490094632963	8
 112	2	1102424523250356314	409060256413384713	3
 154	2	1102424523250356314	1110540052288774224	2
 155	2	1102424523250356314	397598078695374861	2
 152	9	1110540052288774224	559157780666122241	7
 107	4	419885892103045140	606296261531926533	3
 109	2	1102424523250356314	1042723285600829460	3
-110	2	1102424523250356314	434626996262273038	3
 156	2	1102424523250356314	559157780666122241	3
-176	3	255515037676863490	231780195529523201	9
 99	3	1110540052288774224	529590490094632963	7
 161	2	409060256413384713	559157780666122241	2
 162	2	559157780666122241	1042723285600829460	2
 169	3	559157780666122241	947749124676153345	2
-180	9	255515037676863490	231780195529523201	83
 166	2	947749124676153345	533995393671757834	2
 167	2	1129264220744204308	947749124676153345	2
 168	2	533995393671757834	947749124676153345	2
@@ -1197,14 +1156,10 @@ COPY public.silly_command_usage (id_silly_command_usage, id_silly_command, id_us
 116	3	397598078695374861	747874005092139022	11
 177	3	419885892103045140	434626996262273038	2
 157	3	397598078695374861	559157780666122241	4
-114	3	1110540052288774224	533995393671757834	6
-179	9	231780195529523201	255515037676863490	72
 139	4	559157780666122241	1110540052288774224	3
 98	2	559157780666122241	397598078695374861	4
 134	2	397598078695374861	1110540052288774224	39
 182	3	1102424523250356314	559157780666122241	2
-181	3	231780195529523201	255515037676863490	20
-92	3	606296261531926533	434626996262273038	4
 184	2	434626996262273038	298822483060981760	2
 214	3	975986642605207582	434626996262273038	1
 185	2	434626996262273038	411916947773587456	2
@@ -1213,7 +1168,6 @@ COPY public.silly_command_usage (id_silly_command_usage, id_silly_command, id_us
 223	3	434626996262273038	656313695139397642	4
 189	3	903501553112068096	1110540052288774224	1
 191	4	947749124676153345	747874005092139022	1
-225	3	397598078695374861	533995393671757834	3
 194	3	434626996262273038	851117889192591361	1
 200	3	397598078695374861	665082112029884416	3
 197	3	434626996262273038	533995393671757834	1
@@ -1221,21 +1175,28 @@ COPY public.silly_command_usage (id_silly_command_usage, id_silly_command, id_us
 199	2	434626996262273038	255515037676863490	1
 254	3	397598078695374861	997297986205925449	1
 221	2	1110540052288774224	665082112029884416	2
-201	2	434626996262273038	1102424523250356314	1
+225	3	397598078695374861	533995393671757834	5
+93	2	1110540052288774224	529590490094632963	9
+181	3	231780195529523201	255515037676863490	21
+179	9	231780195529523201	255515037676863490	74
+180	9	255515037676863490	231780195529523201	85
+176	3	255515037676863490	231780195529523201	10
+124	2	1110540052288774224	397598078695374861	47
+122	2	1110540052288774224	533995393671757834	6
+92	3	606296261531926533	434626996262273038	5
+110	2	1102424523250356314	434626996262273038	4
+114	3	1110540052288774224	533995393671757834	7
+111	2	1110540052288774224	434626996262273038	41
 219	3	665082112029884416	1110540052288774224	1
 192	3	231780195529523201	127415620793794560	2
 193	3	231780195529523201	188711830720479235	2
 198	3	640194573033013258	1110540052288774224	3
-203	2	409060256413384713	869389411324940309	1
-204	2	869389411324940309	409060256413384713	1
 205	3	947749124676153345	315774797994786836	1
-209	2	434626996262273038	851117889192591361	5
 268	2	529590490094632963	656313695139397642	2
 202	2	665082112029884416	397598078695374861	2
 246	2	1110540052288774224	697988114735693826	2
 207	2	808922671060221972	529590490094632963	1
 208	3	197559279216099329	529590490094632963	1
-196	9	188711830720479235	127415620793794560	40
 255	7	397598078695374861	997297986205925449	1
 243	3	1110540052288774224	808922671060221972	4
 222	2	397598078695374861	269123912304951297	1
@@ -1245,7 +1206,6 @@ COPY public.silly_command_usage (id_silly_command_usage, id_silly_command, id_us
 213	9	665082112029884416	869389411324940309	1
 188	2	434626996262273038	747874005092139022	3
 244	3	1110540052288774224	697988114735693826	2
-241	2	1110540052288774224	656313695139397642	20
 206	3	397598078695374861	529590490094632963	2
 273	4	409060256413384713	1110540052288774224	21
 226	7	397598078695374861	533995393671757834	1
@@ -1267,15 +1227,12 @@ COPY public.silly_command_usage (id_silly_command_usage, id_silly_command, id_us
 247	3	1110540052288774224	997297986205925449	3
 250	2	656313695139397642	529590490094632963	5
 253	2	665082112029884416	559157780666122241	3
-249	2	869389411324940309	1110540052288774224	10
 215	3	397598078695374861	434626996262273038	17
-248	2	1110540052288774224	869389411324940309	12
 252	2	559157780666122241	665082112029884416	2
 257	2	1110540052288774224	997297986205925449	2
 272	4	1110540052288774224	409060256413384713	27
 195	9	127415620793794560	188711830720479235	35
 231	7	1110540052288774224	409060256413384713	80
-234	3	397598078695374861	656313695139397642	3
 262	2	409060256413384713	397598078695374861	1
 183	2	397598078695374861	409060256413384713	8
 263	4	656313695139397642	529590490094632963	4
@@ -1284,15 +1241,11 @@ COPY public.silly_command_usage (id_silly_command_usage, id_silly_command, id_us
 266	3	434626996262273038	997297986205925449	1
 264	4	529590490094632963	656313695139397642	2
 267	7	255515037676863490	231780195529523201	1
-259	2	656313695139397642	409060256413384713	5
 232	7	409060256413384713	1110540052288774224	76
 269	2	1110540052288774224	1134469197334859867	1
 217	3	397598078695374861	409060256413384713	11
 270	3	1134469197334859867	851117889192591361	1
 271	9	255515037676863490	714627662693269635	1
-220	2	665082112029884416	1110540052288774224	4
-190	3	1110540052288774224	665082112029884416	10
-239	3	1110540052288774224	656313695139397642	33
 212	2	397598078695374861	665082112029884416	3
 235	2	434626996262273038	397598078695374861	9
 218	3	559157780666122241	1110540052288774224	9
@@ -1320,6 +1273,15 @@ COPY public.silly_command_usage (id_silly_command_usage, id_silly_command, id_us
 293	2	808922671060221972	434626996262273038	1
 294	3	808922671060221972	434626996262273038	1
 324	3	270974825164439552	606296261531926533	1
+190	3	1110540052288774224	665082112029884416	12
+220	2	665082112029884416	1110540052288774224	5
+203	2	409060256413384713	869389411324940309	4
+241	2	1110540052288774224	656313695139397642	28
+259	2	656313695139397642	409060256413384713	6
+204	2	869389411324940309	409060256413384713	2
+196	9	188711830720479235	127415620793794560	48
+234	3	397598078695374861	656313695139397642	4
+201	2	434626996262273038	1102424523250356314	2
 310	3	397598078695374861	269123912304951297	2
 297	2	1110540052288774224	269123912304951297	1
 311	4	656313695139397642	269123912304951297	1
@@ -1337,34 +1299,26 @@ COPY public.silly_command_usage (id_silly_command_usage, id_silly_command, id_us
 303	3	808922671060221972	409060256413384713	1
 314	3	409060256413384713	533995393671757834	1
 315	3	409060256413384713	342730801567498240	1
-316	2	342730801567498240	409060256413384713	1
 341	2	434626996262273038	640194573033013258	1
 348	9	434626996262273038	512528327341506570	1
 321	2	656313695139397642	434626996262273038	44
-328	3	409060256413384713	656313695139397642	7
 286	3	1134469197334859867	1110540052288774224	2
 308	7	434626996262273038	1042723285600829460	1
-313	3	409060256413384713	869389411324940309	4
 309	3	270974825164439552	409060256413384713	1
-278	3	409060256413384713	397598078695374861	6
 317	3	434626996262273038	529590490094632963	1
 331	3	656313695139397642	533995393671757834	1
 336	2	1110540052288774224	530690227853852672	1
 305	2	269123912304951297	656313695139397642	3
-322	2	434626996262273038	656313695139397642	39
 342	2	640194573033013258	434626996262273038	1
 338	3	869389411324940309	1110540052288774224	1
 339	3	869389411324940309	409060256413384713	1
-292	9	409060256413384713	1110540052288774224	139
 343	2	269123912304951297	640194573033013258	1
 296	3	1110540052288774224	269123912304951297	5
 332	3	656313695139397642	530690227853852672	2
 340	2	656313695139397642	559157780666122241	1
 334	2	397598078695374861	530690227853852672	1
-320	3	606296261531926533	409060256413384713	2
 304	2	656313695139397642	269123912304951297	2
 344	3	269123912304951297	606296261531926533	1
-295	9	1110540052288774224	409060256413384713	134
 329	2	656313695139397642	530690227853852672	34
 335	2	342730801567498240	530690227853852672	3
 350	3	606296261531926533	869389411324940309	1
@@ -1373,11 +1327,59 @@ COPY public.silly_command_usage (id_silly_command_usage, id_silly_command, id_us
 346	3	1110540052288774224	530690227853852672	1
 326	2	656313695139397642	533995393671757834	25
 327	2	533995393671757834	656313695139397642	22
+351	10	409060256413384713	434626996262273038	1
+132	3	1110540052288774224	851117889192591361	9
+354	3	1180958137566646342	606296261531926533	1
+209	2	434626996262273038	851117889192591361	6
+355	2	606296261531926533	1180958137566646342	2
+328	3	409060256413384713	656313695139397642	15
+248	2	1110540052288774224	869389411324940309	19
+359	3	342730801567498240	947749124676153345	2
+361	2	409060256413384713	342730801567498240	1
+369	2	620279341670203413	606296261531926533	1
+316	2	342730801567498240	409060256413384713	2
+7	3	409060256413384713	434626996262273038	10
+365	2	397598078695374861	869389411324940309	1
+239	3	1110540052288774224	656313695139397642	41
+322	2	434626996262273038	656313695139397642	41
+295	9	1110540052288774224	409060256413384713	206
+360	3	434626996262273038	869389411324940309	1
+249	2	869389411324940309	1110540052288774224	12
+352	2	869389411324940309	434626996262273038	2
+72	3	1110540052288774224	869389411324940309	16
+313	3	409060256413384713	869389411324940309	11
+363	4	434626996262273038	342730801567498240	1
+11	3	409060256413384713	606296261531926533	50
+119	3	409060256413384713	1110540052288774224	45
+353	2	434626996262273038	869389411324940309	2
+362	2	434626996262273038	1180958137566646342	2
+364	4	342730801567498240	434626996262273038	1
+366	2	869389411324940309	397598078695374861	1
+172	2	255515037676863490	231780195529523201	28
+40	2	606296261531926533	342730801567498240	22
+292	9	409060256413384713	1110540052288774224	183
+278	3	409060256413384713	397598078695374861	7
+367	2	606296261531926533	656313695139397642	1
+356	2	869389411324940309	656313695139397642	2
+368	2	606296261531926533	620279341670203413	1
+357	2	409060256413384713	656313695139397642	3
+370	2	606296261531926533	997297986205925449	1
+371	2	620279341670203413	997297986205925449	1
+358	3	947749124676153345	342730801567498240	4
+372	7	606296261531926533	434626996262273038	1
+373	7	434626996262273038	606296261531926533	1
+374	2	606296261531926533	282278542048493568	1
+320	3	606296261531926533	409060256413384713	7
+375	2	1110540052288774224	702818130593841152	1
+376	2	1110540052288774224	517859660569509889	1
+20	2	342730801567498240	434626996262273038	158
+377	2	434626996262273038	315774797994786836	1
+378	2	315774797994786836	434626996262273038	1
 \.
 
 
 --
--- Data for Name: silly_commands; Type: TABLE DATA; Schema: public; Owner: taka_the_discord_bot
+-- Data for Name: silly_commands; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.silly_commands (id_silly_command, name, command_type, description, gender_attributes, footer_text) FROM stdin;
@@ -1389,81 +1391,91 @@ COPY public.silly_commands (id_silly_command, name, command_type, description, g
 7	handholding	2	Hold hands!	{"Male x Female","Male x Male","Female x Female"}	{author} has held hands with {user} {count} times!
 3	pat	2	Pat someone!	{CATS,"Male x Female","Male x Male","Female x Female"}	{author} has headpatted {user} {count} times!
 2	hug	2	Send a hug to someone!	{CATS,"Male x Female","Male x Male","Female x Female"}	{author} has hugged {user} {count} times!
+10	pizza	2	totally pizza someone	{}	you've been pizza'd
 \.
 
 
 --
--- Name: silly_command_images_id_silly_command_images_seq; Type: SEQUENCE SET; Schema: public; Owner: taka_the_discord_bot
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.silly_command_images_id_silly_command_images_seq', 253, true);
+COPY public.users (id, name, email, verified, password, role, created_at, updated_at, password_rev) FROM stdin;
+650caddd-b045-43d5-b691-dcc749e24b3c	taka_the_discord_bot	taka_the_discord_bot@gmail.com	t	XejuB3dm5K5AdAQGCjVvweULZeHHH9zai9fMBKQt3kaaJwANrjaETmaWLBnsAm9HcPD	admin	2023-12-12 09:40:42.483969+00	2023-12-12 09:40:42.483969+00	2fce3c98-753e-430a-b11f-48c41628c187
+\.
 
 
 --
--- Name: silly_command_new_id_command_seq; Type: SEQUENCE SET; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_images_id_silly_command_images_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.silly_command_images_id_silly_command_images_seq', 254, true);
+
+
+--
+-- Name: silly_command_new_id_command_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.silly_command_new_id_command_seq', 1, true);
 
 
 --
--- Name: silly_command_new_id_silly_command_seq; Type: SEQUENCE SET; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_new_id_silly_command_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.silly_command_new_id_silly_command_seq', 1, false);
 
 
 --
--- Name: silly_command_self_action_tex_id_silly_command_self_action__seq; Type: SEQUENCE SET; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_self_action_tex_id_silly_command_self_action__seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.silly_command_self_action_tex_id_silly_command_self_action__seq', 6, true);
 
 
 --
--- Name: silly_command_self_actions_id_silly_command_self_action_seq; Type: SEQUENCE SET; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_self_actions_id_silly_command_self_action_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.silly_command_self_actions_id_silly_command_self_action_seq', 10, true);
 
 
 --
--- Name: silly_command_texts_id_silly_command_text_seq; Type: SEQUENCE SET; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_texts_id_silly_command_text_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.silly_command_texts_id_silly_command_text_seq', 11, true);
 
 
 --
--- Name: silly_command_type_id_silly_command_type_seq; Type: SEQUENCE SET; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_type_id_silly_command_type_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.silly_command_type_id_silly_command_type_seq', 2, true);
 
 
 --
--- Name: silly_command_usage_id_silly_command_usage_seq; Type: SEQUENCE SET; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_usage_id_silly_command_usage_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.silly_command_usage_id_silly_command_usage_seq', 350, true);
+SELECT pg_catalog.setval('public.silly_command_usage_id_silly_command_usage_seq', 378, true);
 
 
 --
--- Name: silly_commands_id_new_seq; Type: SEQUENCE SET; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_commands_id_new_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.silly_commands_id_new_seq', 1, false);
 
 
 --
--- Name: silly_commands_id_seq; Type: SEQUENCE SET; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_commands_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.silly_commands_id_seq', 9, true);
+SELECT pg_catalog.setval('public.silly_commands_id_seq', 10, true);
 
 
 --
--- Name: silly_command_images silly_command_images_pkey; Type: CONSTRAINT; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_images silly_command_images_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.silly_command_images
@@ -1471,7 +1483,7 @@ ALTER TABLE ONLY public.silly_command_images
 
 
 --
--- Name: silly_command_new silly_command_new_pkey; Type: CONSTRAINT; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_new silly_command_new_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.silly_command_new
@@ -1479,7 +1491,7 @@ ALTER TABLE ONLY public.silly_command_new
 
 
 --
--- Name: silly_command_self_action_texts silly_command_self_action_texts_pkey; Type: CONSTRAINT; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_self_action_texts silly_command_self_action_texts_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.silly_command_self_action_texts
@@ -1487,7 +1499,7 @@ ALTER TABLE ONLY public.silly_command_self_action_texts
 
 
 --
--- Name: silly_command_self_action_images silly_command_self_actions_pkey; Type: CONSTRAINT; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_self_action_images silly_command_self_actions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.silly_command_self_action_images
@@ -1495,7 +1507,7 @@ ALTER TABLE ONLY public.silly_command_self_action_images
 
 
 --
--- Name: silly_command_texts silly_command_texts_pkey; Type: CONSTRAINT; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_texts silly_command_texts_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.silly_command_texts
@@ -1503,7 +1515,7 @@ ALTER TABLE ONLY public.silly_command_texts
 
 
 --
--- Name: silly_command_type silly_command_type_pkey; Type: CONSTRAINT; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_type silly_command_type_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.silly_command_type
@@ -1511,7 +1523,7 @@ ALTER TABLE ONLY public.silly_command_type
 
 
 --
--- Name: silly_command_usage silly_command_usage_pkey; Type: CONSTRAINT; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_usage silly_command_usage_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.silly_command_usage
@@ -1519,7 +1531,7 @@ ALTER TABLE ONLY public.silly_command_usage
 
 
 --
--- Name: silly_commands silly_commands_pkey; Type: CONSTRAINT; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_commands silly_commands_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.silly_commands
@@ -1527,7 +1539,7 @@ ALTER TABLE ONLY public.silly_commands
 
 
 --
--- Name: silly_command_type unique_id; Type: CONSTRAINT; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_type unique_id; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.silly_command_type
@@ -1535,7 +1547,7 @@ ALTER TABLE ONLY public.silly_command_type
 
 
 --
--- Name: silly_command_type unique_id_name; Type: CONSTRAINT; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_type unique_id_name; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.silly_command_type
@@ -1543,7 +1555,7 @@ ALTER TABLE ONLY public.silly_command_type
 
 
 --
--- Name: silly_commands unique_silly_command; Type: CONSTRAINT; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_commands unique_silly_command; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.silly_commands
@@ -1551,7 +1563,7 @@ ALTER TABLE ONLY public.silly_commands
 
 
 --
--- Name: silly_commands unique_silly_command_id; Type: CONSTRAINT; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_commands unique_silly_command_id; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.silly_commands
@@ -1559,21 +1571,44 @@ ALTER TABLE ONLY public.silly_commands
 
 
 --
--- Name: unique_silly_command_id_new; Type: INDEX; Schema: public; Owner: taka_the_discord_bot
+-- Name: users users_email_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_email_key UNIQUE (email);
+
+
+--
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: unique_silly_command_id_new; Type: INDEX; Schema: public; Owner: postgres
 --
 
 CREATE UNIQUE INDEX unique_silly_command_id_new ON public.silly_command_new USING btree (id_silly_command);
 
 
 --
--- Name: unique_silly_command_new; Type: INDEX; Schema: public; Owner: taka_the_discord_bot
+-- Name: unique_silly_command_new; Type: INDEX; Schema: public; Owner: postgres
 --
 
 CREATE UNIQUE INDEX unique_silly_command_new ON public.silly_command_new USING btree (id_silly_command, name);
 
 
 --
--- Name: silly_commands fk_id_command_type; Type: FK CONSTRAINT; Schema: public; Owner: taka_the_discord_bot
+-- Name: users_email_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX users_email_idx ON public.users USING btree (email);
+
+
+--
+-- Name: silly_commands fk_id_command_type; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.silly_commands
@@ -1581,7 +1616,7 @@ ALTER TABLE ONLY public.silly_commands
 
 
 --
--- Name: silly_command_new fk_id_command_type; Type: FK CONSTRAINT; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_new fk_id_command_type; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.silly_command_new
@@ -1589,7 +1624,7 @@ ALTER TABLE ONLY public.silly_command_new
 
 
 --
--- Name: silly_command_self_action_images fk_id_silly_command; Type: FK CONSTRAINT; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_self_action_images fk_id_silly_command; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.silly_command_self_action_images
@@ -1597,7 +1632,7 @@ ALTER TABLE ONLY public.silly_command_self_action_images
 
 
 --
--- Name: silly_command_images fk_id_silly_command; Type: FK CONSTRAINT; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_images fk_id_silly_command; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.silly_command_images
@@ -1605,7 +1640,7 @@ ALTER TABLE ONLY public.silly_command_images
 
 
 --
--- Name: silly_command_self_action_texts fk_id_silly_command; Type: FK CONSTRAINT; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_self_action_texts fk_id_silly_command; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.silly_command_self_action_texts
@@ -1613,7 +1648,7 @@ ALTER TABLE ONLY public.silly_command_self_action_texts
 
 
 --
--- Name: silly_command_texts fk_id_silly_command; Type: FK CONSTRAINT; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_texts fk_id_silly_command; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.silly_command_texts
@@ -1621,23 +1656,11 @@ ALTER TABLE ONLY public.silly_command_texts
 
 
 --
--- Name: silly_command_usage fk_id_silly_command; Type: FK CONSTRAINT; Schema: public; Owner: taka_the_discord_bot
+-- Name: silly_command_usage fk_id_silly_command; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.silly_command_usage
     ADD CONSTRAINT fk_id_silly_command FOREIGN KEY (id_silly_command) REFERENCES public.silly_commands(id_silly_command);
-
-
---
--- Name: DATABASE taka_the_discord_bot; Type: ACL; Schema: -; Owner: postgres
---
-
-
-
---
--- Name: SCHEMA public; Type: ACL; Schema: -; Owner: pg_database_owner
---
-
 
 
 --

@@ -10,3 +10,9 @@
 [submodule "taka_the_discord_bot_common"]
 	path = taka_the_discord_bot_common
 	url = https://github.com/Takathediscordbot/taka_the_discord_bot_common.git
+[submodule "taka_the_discord_bot_api"]
+	path = taka_the_discord_bot_api
+	url = https://github.com/Takathediscordbot/taka_the_discord_bot_api.git
+[submodule "assets"]
+	path = assets
+	url = https://github.com/Takathediscordbot/DiscordBotAssets.git
