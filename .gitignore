@@ -7,3 +7,4 @@ hun2.ttf
 .vscode
 .env
 ./assets
+Cargo.lock
